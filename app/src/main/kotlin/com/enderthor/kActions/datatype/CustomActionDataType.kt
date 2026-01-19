@@ -53,7 +53,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-
 @OptIn(ExperimentalGlanceRemoteViewsApi::class)
 class CustomActionDataType(
     datatype: String,
@@ -63,10 +62,6 @@ class CustomActionDataType(
 
 
     companion object {
-        private var lastStatusUpdateTime: Long = 0
-        private const val ACTION_THRESHOLD = 8_000L
-        private var statusUpdateJob: Job? = null
-
         private var readyMessageShown: Boolean = false
     }
 
@@ -125,38 +120,6 @@ class CustomActionDataType(
                         val message = if (configData.isNotEmpty()) configData.first().customMessage1 else null
                         val webhook = if (webhooks.isNotEmpty()) webhooks.first() else null
 
-                       // Timber.d("Actualizando vista - Webhook: ${webhook?.status}, Mensaje: ${message?.status}")
-
-                        if (message?.status == StepStatus.FIRST && lastStatusUpdateTime == 0L) {
-                            lastStatusUpdateTime = System.currentTimeMillis()
-                            statusUpdateJob?.cancel()
-
-                            statusUpdateJob = scope.launch {
-                                delay(ACTION_THRESHOLD)
-                                if (message.status == StepStatus.FIRST) {
-
-                                    val exten = KActionsExtension.getInstance() ?: return@launch
-                                    exten.updateCustomMessageStatus(0, StepStatus.CONFIRM)
-                                    exten.updateWebhookStatus(0, StepStatus.CONFIRM)
-
-
-                                    val result = updateConfigDataView(
-                                        context = context,
-                                        webhook = webhook?.copy(status = StepStatus.CONFIRM),
-                                        message = message.copy(status = StepStatus.CONFIRM),
-                                        config = config,
-                                        units = units,
-                                    )
-                                    emitter.updateView(result.remoteViews)
-                                }
-                            }
-                        } else if (message?.status != StepStatus.FIRST) {
-
-                            statusUpdateJob?.cancel()
-                            lastStatusUpdateTime = 0L
-                        }
-
-
                         val result = updateConfigDataView(
                             context = context,
                             webhook = webhook,
@@ -171,23 +134,22 @@ class CustomActionDataType(
             } catch (e: Exception) {
                 Timber.e(e, "Error actualizando vista: ${e.message}")
 
-                    val result = updateConfigDataView(
-                        context = context,
-                        webhook = null,
-                        message = null,
-                        config = config,
-                        units = UserProfile.PreferredUnit.UnitType.METRIC,
-                    )
-                    emitter.updateView(result.remoteViews)
-                    delay(5000)
-                }
+                val result = updateConfigDataView(
+                    context = context,
+                    webhook = null,
+                    message = null,
+                    config = config,
+                    units = UserProfile.PreferredUnit.UnitType.METRIC,
+                )
+                emitter.updateView(result.remoteViews)
+                delay(5000)
+            }
 
         }
 
         emitter.setCancellable {
             configJob.cancel()
             viewJob.cancel()
-            statusUpdateJob?.cancel()
             scope.cancel()
             scopeJob.cancel()
         }
@@ -195,9 +157,9 @@ class CustomActionDataType(
 
     private fun getReadyMessageText(messageAvailable: Boolean, webhookAvailable: Boolean): String {
         return when {
-            messageAvailable && webhookAvailable -> context.getString(R.string.webhook_first_action)
+            messageAvailable && webhookAvailable -> "Waiting for webhook"
             messageAvailable -> context.getString(R.string.message_only_action)
-            webhookAvailable -> context.getString(R.string.webhook_only_action)
+            webhookAvailable -> "Tap again to confirm"
             else -> context.getString(R.string.idle_action)
         }
     }
@@ -212,27 +174,11 @@ class CustomActionDataType(
 
         val statusMessage = message?.status ?: StepStatus.NOT_AVAILABLE
         val webhookStatus = webhook?.status ?: StepStatus.NOT_AVAILABLE
-        val currentTime = System.currentTimeMillis()
-
-
-        if (message?.status != null) {
-            if (statusMessage == StepStatus.FIRST && lastStatusUpdateTime == 0L) {
-
-                lastStatusUpdateTime = currentTime
-                readyMessageShown = false
-            } else if (statusMessage != StepStatus.FIRST) {
-
-                lastStatusUpdateTime = 0L
-                readyMessageShown = false
-            }
-        }
-
 
         val name = ""
         var displayText = message?.message ?: ""
 
         val displayStatus = when {
-
             webhook == null && message == null -> StepStatus.NOT_AVAILABLE
             webhookStatus == StepStatus.CONFIRM ||
                     webhookStatus == StepStatus.EXECUTING ||
@@ -240,7 +186,6 @@ class CustomActionDataType(
                     webhookStatus == StepStatus.SUCCESS -> webhookStatus
 
             displayText.isEmpty() && webhook?.enabled == true && webhook.url.isNotEmpty() -> webhookStatus
-
 
             else -> statusMessage
         }
@@ -251,24 +196,9 @@ class CustomActionDataType(
         val actionString = when (displayStatus) {
             StepStatus.IDLE -> context.getString(R.string.idle_action)
             StepStatus.FIRST -> {
-                if (lastStatusUpdateTime > 0L) {
-                    val timeElapsed = currentTime - lastStatusUpdateTime
-                    if (timeElapsed >= ACTION_THRESHOLD) {
-                        //Timber.d("Tiempo transcurrido: ${timeElapsed}ms - Listo para webhook")
-                        context.getString(R.string.webhook_confirm_action)
-                    } else {
-                        //Timber.d("Tiempo transcurrido: ${timeElapsed}ms - Mostrando opciones")
-                       // context.getString(R.string.message_first_action)
-                        val messageAvailable = message != null && message.message.isNotEmpty()
-                        val webhookAvailable = webhook != null && webhook.url.isNotEmpty()
-                        getReadyMessageText(messageAvailable, webhookAvailable)
-                    }
-                } else {
-                    val messageAvailable = message != null && message.message.isNotEmpty()
-                    val webhookAvailable = webhook != null && webhook.url.isNotEmpty()
-                    getReadyMessageText(messageAvailable, webhookAvailable)
-                    //context.getString(R.string.message_first_action)
-                }
+                val messageAvailable = message != null && message.message.isNotEmpty()
+                val webhookAvailable = webhook != null && webhook.url.isNotEmpty()
+                getReadyMessageText(messageAvailable, webhookAvailable)
             }
             StepStatus.CONFIRM -> context.getString(R.string.webhook_confirm_action)
             StepStatus.EXECUTING -> context.getString(R.string.webhook_excuting_action)
@@ -290,7 +220,6 @@ class CustomActionDataType(
             var modifier = GlanceModifier.fillMaxSize().padding(5.dp)
 
             if (!config.preview) {
-
                 modifier = modifier.clickable(
                     onClick = actionRunCallback<UnifiedActionCallback>(
                         actionParametersOf(

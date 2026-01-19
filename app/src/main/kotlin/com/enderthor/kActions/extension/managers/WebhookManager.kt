@@ -7,11 +7,19 @@ import com.enderthor.kActions.data.StepStatus
 import com.enderthor.kActions.extension.makeHttpRequest
 import com.enderthor.kActions.extension.getGpsFlow
 import com.enderthor.kActions.extension.getHomeFlow
+import com.enderthor.kActions.extension.streamDataMonitorFlow
+import com.enderthor.kActions.extension.streamUserProfile
 import io.hammerhead.karooext.KarooSystemService
+import io.hammerhead.karooext.models.DataType
+import io.hammerhead.karooext.models.StreamState
+import io.hammerhead.karooext.models.UserProfile
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
@@ -33,6 +41,38 @@ class WebhookManager(
     private val configManager = ConfigurationManager(context)
     private var webhookConfig: WebhookData? = null
 
+    private fun KarooSystemService.getRemainingDistanceFlow(): Flow<Double> {
+        return streamDataMonitorFlow(DataType.Type.DISTANCE_TO_DESTINATION)
+            .map { state ->
+                if (state is StreamState.Streaming) {
+                    state.dataPoint.values["FIELD_DISTANCE_TO_DESTINATION_ID"] ?: 0.0
+                } else 0.0
+            }
+            .catch { e ->
+                Timber.e(e, "Error obteniendo distancia: ${e.message}")
+                emit(0.0)
+            }
+    }
+
+    private suspend fun getRemainingDistance(): String {
+        try {
+            val distance = karooSystem.getRemainingDistanceFlow().first()
+            val units = karooSystem.streamUserProfile().first().preferredUnit.distance
+
+            return when {
+                distance <= 0.0 -> "0"
+                units == UserProfile.PreferredUnit.UnitType.IMPERIAL ->
+                    "${(distance / 1609).toInt()} mi"
+                distance < 1000 ->
+                    "${distance.toInt()} m"
+                else ->
+                    "${(distance / 1000).toInt()} km"
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "Error getting remaining distance")
+            return "0"
+        }
+    }
 
     suspend fun loadWebhookConfiguration(webhookId: Int? = null) {
         val webhooks = configManager.loadWebhookDataFlow().first()
@@ -43,15 +83,11 @@ class WebhookManager(
         }
     }
 
-
     suspend fun handleEvent(eventType: String, webhookId: Int): Boolean {
         try {
             loadWebhookConfiguration(webhookId)
 
-            //Timber.w("Estamos en  HANDLE EVENT")
-
             webhookConfig?.let { config ->
-                //if (!config.enabled) return false
                 val modConfig: WebhookData
                 val shouldTrigger = when (eventType) {
                     "start" -> {
@@ -75,21 +111,19 @@ class WebhookManager(
                         config.actionOnCustom
                     }
                     else -> {
-                        modConfig = config    
+                        modConfig = config
                         false
                     }
                 }
 
                 val locationOk = if (config.onlyIfLocation) {
-                    //Timber.w("Comprobando ubicación actual")
                     val poi = karooSystem.getHomeFlow().first()
                     checkCurrentLocation(poi)
                 } else {
                     true
                 }
-               // Timber.w("Ubicación actual comprobada antes de salir")
+
                 if (shouldTrigger && locationOk) {
-                    //Timber.w("Webhook activado")
                     return sendWebhook(modConfig)
                 }
                 else return false
@@ -100,7 +134,6 @@ class WebhookManager(
             return false
         }
     }
-
 
     fun restorePendingWebhookStates() {
         scope.launch(Dispatchers.IO) {
@@ -116,12 +149,8 @@ class WebhookManager(
                         val remainingTime = targetTime - currentTime
 
                         if (remainingTime > 0) {
-
                             updateWebhookStatus(webhook.id, status)
-
-
                             delay(remainingTime)
-
 
                             when (status) {
                                 StepStatus.FIRST -> {
@@ -139,7 +168,6 @@ class WebhookManager(
                                 else -> webhookStateStore.clearWebhookState(webhook.id)
                             }
                         } else {
-
                             updateWebhookStatus(webhook.id, StepStatus.IDLE)
                             webhookStateStore.clearWebhookState(webhook.id)
                         }
@@ -150,7 +178,6 @@ class WebhookManager(
             }
         }
     }
-
 
     fun updateWebhookStatus(webhookId: Int, newStatus: StepStatus) {
         scope.launch(Dispatchers.IO) {
@@ -186,20 +213,14 @@ class WebhookManager(
 
     private suspend fun checkCurrentLocation(targetLocation: GpsCoordinates): Boolean {
         try {
-           // Timber.w("Comprobando ubicación actual")
             val currentLocation = karooSystem.getGpsFlow().first()
-
             val distance = distanceTo(currentLocation, targetLocation)
-           // Timber.w("Distancia a la ubicación objetivo: $distance km")
-            return distance <= 0.070 // 70 metros
-
+            return distance <= 0.070 // 70 meters
         } catch (e: Exception) {
             Timber.e(e, "Error al comprobar la ubicación: ${e.message}")
             return false
         }
-
     }
-
 
     fun scheduleResetToIdle(webhookId: Int, delayMillis: Long) {
         webhookStateStore.saveWebhookState(
@@ -218,16 +239,12 @@ class WebhookManager(
     fun executeWebhookWithStateTransitions(webhookId: Int) {
         scope.launch(Dispatchers.IO) {
             try {
-
                 webhookStateStore.clearWebhookState(webhookId)
                 updateWebhookStatus(webhookId, StepStatus.EXECUTING)
 
-
                 delay(4_000)
 
-
                 val statuscode = handleEvent("custom", webhookId)
-
 
                 val finalState = if (statuscode) StepStatus.SUCCESS else StepStatus.ERROR
                 val visibilityTime = if (statuscode) 4_000L else 5_000L
@@ -239,19 +256,14 @@ class WebhookManager(
                     System.currentTimeMillis() + visibilityTime
                 )
 
-
                 delay(visibilityTime)
-
-
                 delay(600)
-
 
                 webhookStateStore.clearWebhookState(webhookId)
                 updateWebhookStatus(webhookId, StepStatus.IDLE)
 
             } catch (e: Exception) {
                 Timber.e(e, "Error al ejecutar webhook $webhookId: ${e.message}")
-
 
                 updateWebhookStatus(webhookId, StepStatus.ERROR)
                 webhookStateStore.saveWebhookState(
@@ -271,14 +283,16 @@ class WebhookManager(
 
     suspend fun sendWebhook(config: WebhookData): Boolean {
         try {
-
             Timber.d("Enviando webhook a: ${config.url}")
-
 
             if (!config.url.startsWith("http")) {
                 Timber.e("URL de webhook inválida: ${config.url}")
                 return false
             }
+
+            // Replace #dst# with remaining distance
+            val remainingDistance = getRemainingDistance()
+            val postBodyWithDistance = config.post.replace("#dst#", remainingDistance)
 
             val defaultHeaders = mapOf("Content-Type" to "application/json")
             val customHeaders = if (config.header.isNotBlank()) {
@@ -291,23 +305,17 @@ class WebhookManager(
             } else emptyMap()
 
             val headers = defaultHeaders + customHeaders
-
             val contentType = customHeaders["Content-Type"]?.lowercase()
 
-            val postBody = config.post
-
             val body = when {
-                postBody.isBlank() -> null
+                postBodyWithDistance.isBlank() -> null
                 contentType?.contains("json") == true -> {
-
-                    if (postBody.trim().startsWith("{") && postBody.trim().endsWith("}")) {
-
-                        postBody.toByteArray()
+                    if (postBodyWithDistance.trim().startsWith("{") && postBodyWithDistance.trim().endsWith("}")) {
+                        postBodyWithDistance.toByteArray()
                     } else {
-
                         try {
                             val jsonObject = buildJsonObject {
-                                postBody.split("\n").forEach { line ->
+                                postBodyWithDistance.split("\n").forEach { line ->
                                     val parts = line.split(":", limit = 2)
                                     if (parts.size == 2) {
                                         put(parts[0].trim(), JsonPrimitive(parts[1].trim()))
@@ -316,14 +324,12 @@ class WebhookManager(
                             }
                             jsonObject.toString().toByteArray()
                         } catch (e: Exception) {
-                            postBody.toByteArray()
+                            postBodyWithDistance.toByteArray()
                         }
                     }
                 }
-                else -> postBody.toByteArray()
+                else -> postBodyWithDistance.toByteArray()
             }
-
-
 
             val response = karooSystem.makeHttpRequest(
                 method = "POST",
@@ -346,6 +352,4 @@ class WebhookManager(
             return false
         }
     }
-
-
 }

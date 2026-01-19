@@ -24,17 +24,12 @@ class UnifiedActionCallback : ActionCallback {
         val WEBHOOK_ENABLED = ActionParameters.Key<Boolean>("webhook_enabled")
         val WEBHOOK_URL = ActionParameters.Key<String>("webhook_url")
 
-        private const val ACTION_THRESHOLD = 8_000L
-        private const val CANCEL_THRESHOLD = 15_000L
         private const val EXECUTING_TIMEOUT = 30_000L
 
         private var lastClickTime: Long = 0
         private var executingStartTime: Long = 0
         private var consecutiveClicks: Int = 0
-        private var pendingAction: Boolean = false
-        private var timerJob: Job? = null
         private var executingTimeoutJob: Job? = null
-        private var readyForActionJob: Job? = null
     }
 
     override suspend fun onAction(
@@ -52,32 +47,18 @@ class UnifiedActionCallback : ActionCallback {
             val currentTime = System.currentTimeMillis()
             val timeDiff = currentTime - lastClickTime
 
-           // Timber.d("UnifiedActionCallback: $currentStatus, webhookEnabled: $webhookEnabled, webhookUrl: $webhookUrl")
-
-
-
-            timerJob?.cancel()
-            timerJob = null
-
-
             if (currentStatus == StepStatus.EXECUTING) {
-
                 consecutiveClicks++
 
-
                 if (executingStartTime > 0 && currentTime - executingStartTime > EXECUTING_TIMEOUT) {
-                  //  Timber.d("Timeout de EXECUTING superado, restableciendo estado")
                     resetState(extension)
                     return
                 }
-
 
                 if (consecutiveClicks >= 3 && timeDiff < 2000) {
-                  //  Timber.d("Reset forzado por múltiples clicks en EXECUTING")
                     resetState(extension)
                     return
                 }
-
 
                 val webhookActive = webhookEnabled && webhookUrl.isNotEmpty()
                 val messageActive = messageText.isNotEmpty()
@@ -87,10 +68,8 @@ class UnifiedActionCallback : ActionCallback {
                 }
                 return
             } else {
-
                 consecutiveClicks = 0
             }
-
 
             if (currentStatus == StepStatus.ERROR || currentStatus == StepStatus.SUCCESS) {
                 resetState(extension)
@@ -99,68 +78,25 @@ class UnifiedActionCallback : ActionCallback {
 
             when (currentStatus) {
                 StepStatus.IDLE -> {
-                    // Primera pulsación: cambiar a FIRST
+                    // First click: change to FIRST
                     extension.updateCustomMessageStatus(0, StepStatus.FIRST)
                     extension.updateWebhookStatus(0, StepStatus.FIRST)
-
                     lastClickTime = currentTime
-                    pendingAction = true
-
-                    // Timer para resetear después de 15s
-                    timerJob = CoroutineScope(Dispatchers.IO).launch {
-                        try {
-                            delay(CANCEL_THRESHOLD)
-                            resetState(extension)
-                        } catch (e: CancellationException) {
-                           // Timber.d("Timer cancelado")
-                        }
-                    }
                 }
 
                 StepStatus.FIRST -> {
-                    val timeDiff = currentTime - lastClickTime
-
-                    if (timeDiff < ACTION_THRESHOLD) {
-
-                        if (messageText.isNotEmpty()) {
-                           // Timber.d("Ejecutando mensaje personalizado")
-                            executingStartTime = currentTime
-                            extension.updateCustomMessageStatus(0, StepStatus.EXECUTING)
-
-                            executeMessage(extension, messageText)
-                        } else {
-                            //Timber.d("No hay mensaje disponible")
-                            resetState(extension)
-                        }
-                    } else if (timeDiff <= CANCEL_THRESHOLD) {
-
-                        if (webhookUrl.isNotEmpty() && webhookEnabled) {
-                          //  Timber.d("Confirmando webhook")
-                            extension.updateWebhookStatus(0, StepStatus.CONFIRM)
-                            extension.updateCustomMessageStatus(0, StepStatus.CONFIRM)
-
-
-                            timerJob = CoroutineScope(Dispatchers.IO).launch {
-                                try {
-                                    delay(CANCEL_THRESHOLD)
-                                    resetState(extension)
-                                } catch (e: CancellationException) {
-                                 //   Timber.d("Timer cancelado")
-                                }
-                            }
-                        } else {
-                           // Timber.d("No hay webhook disponible")
-                            resetState(extension)
-                        }
-                    } else {
-                        resetState(extension)
-                    }
-                }
-
-                StepStatus.CONFIRM -> {
-
-                    if (webhookUrl.isNotEmpty()) {
-                       // Timber.d("Ejecutando webhook")
+                    // Second click: execute immediately
+                    if (messageText.isNotEmpty() && webhookUrl.isNotEmpty() && webhookEnabled) {
+                        // Both available - execute webhook
+                        executingStartTime = currentTime
+                        executeWebhook(extension, 0, context)
+                    } else if (messageText.isNotEmpty()) {
+                        // Only message available
+                        executingStartTime = currentTime
+                        extension.updateCustomMessageStatus(0, StepStatus.EXECUTING)
+                        executeMessage(extension, messageText)
+                    } else if (webhookUrl.isNotEmpty() && webhookEnabled) {
+                        // Only webhook available
                         executingStartTime = currentTime
                         executeWebhook(extension, 0, context)
                     } else {
@@ -173,22 +109,14 @@ class UnifiedActionCallback : ActionCallback {
 
             lastClickTime = currentTime
 
-
-            if ((currentStatus == StepStatus.FIRST && timeDiff < ACTION_THRESHOLD && messageText.isNotEmpty()) ||
-                (currentStatus == StepStatus.CONFIRM && webhookUrl.isNotEmpty())) {
-
+            // Set timeout for EXECUTING state
+            if (currentStatus == StepStatus.FIRST) {
                 executingTimeoutJob?.cancel()
                 executingTimeoutJob = CoroutineScope(Dispatchers.IO).launch {
                     delay(EXECUTING_TIMEOUT)
-                   // Timber.d("Timeout de EXECUTING, restableciendo estado")
                     resetState(extension)
                 }
             }
-            if (currentStatus != StepStatus.FIRST) {
-                readyForActionJob?.cancel()
-                readyForActionJob = null
-            }
-
 
         } catch (e: Exception) {
             Timber.e(e, "Error en UnifiedActionCallback")
@@ -204,84 +132,67 @@ class UnifiedActionCallback : ActionCallback {
     }
 
     private fun resetState(extension: KActionsExtension) {
-       // Timber.d("Restableciendo estado a IDLE")
         executingTimeoutJob?.cancel()
         executingStartTime = 0
         consecutiveClicks = 0
         extension.updateCustomMessageStatus(0, StepStatus.IDLE)
         extension.updateWebhookStatus(0, StepStatus.IDLE)
-        pendingAction = false
     }
 
     private suspend fun executeMessage(extension: KActionsExtension, messageText: String) {
         withContext(Dispatchers.IO) {
             try {
-              //  Timber.d("Ejecutando mensaje personalizado: $messageText")
                 extension.updateCustomMessageStatus(0, StepStatus.EXECUTING)
                 extension.sendCustomMessageWithStateTransitions(0, messageText)
             } catch (e: Exception) {
-             //   Timber.e(e, "Error ejecutando mensaje personalizado")
                 extension.updateCustomMessageStatus(0, StepStatus.ERROR)
-            } finally {
-                pendingAction = false
             }
         }
     }
 
-   private suspend fun executeWebhook(extension: KActionsExtension, webhookId: Int, context: Context) {
-    withContext(Dispatchers.IO) {
-        try {
-          //  Timber.d("Ejecutando webhook con ID: $webhookId")
+    private suspend fun executeWebhook(extension: KActionsExtension, webhookId: Int, context: Context) {
+        withContext(Dispatchers.IO) {
+            try {
+                executingTimeoutJob?.cancel()
+                executingTimeoutJob = null
+                executingStartTime = 0
 
-            executingTimeoutJob?.cancel()
-            executingTimeoutJob = null
-            executingStartTime = 0
+                val scope = CoroutineScope(Dispatchers.IO)
+                val monitorJob = scope.launch {
+                    val configManager = ConfigurationManager(context)
+                    var previousStatus: StepStatus? = null
 
-            val scope = CoroutineScope(Dispatchers.IO)
-            val monitorJob = scope.launch {
-                val configManager = ConfigurationManager(context)
-                var previousStatus: StepStatus? = null
+                    configManager.loadWebhookDataFlow().collect { webhooks ->
+                        val webhook = webhooks.find { it.id == webhookId }
+                        webhook?.let {
+                            val currentStatus = it.status
 
-                configManager.loadWebhookDataFlow().collect { webhooks ->
-                    val webhook = webhooks.find { it.id == webhookId }
-                    webhook?.let {
-                        val currentStatus = it.status
+                            if (previousStatus != currentStatus) {
+                                previousStatus = currentStatus
 
-                        if (previousStatus != currentStatus) {
-                        //    Timber.w("Cambio de estado detectado: $previousStatus -> ${it.status}")
-                            previousStatus = currentStatus
-
-
-                            if (currentStatus == StepStatus.IDLE) {
-
-                            //    Timber.d("Estado final detectado: $currentStatus - Limpiando recursos")
-                                executingTimeoutJob?.cancel()
-                                executingTimeoutJob = null
-                                executingStartTime = 0
-                                consecutiveClicks = 0
-                                pendingAction = false
-                                resetState(extension)
-
-
-                                this.cancel()
+                                if (currentStatus == StepStatus.IDLE) {
+                                    executingTimeoutJob?.cancel()
+                                    executingTimeoutJob = null
+                                    executingStartTime = 0
+                                    consecutiveClicks = 0
+                                    resetState(extension)
+                                    this.cancel()
+                                }
                             }
                         }
                     }
                 }
+
+                extension.updateWebhookStatus(webhookId, StepStatus.EXECUTING)
+                extension.updateCustomMessageStatus(0, StepStatus.EXECUTING)
+
+                extension.executeWebhookWithStateTransitions(webhookId)
+
+                monitorJob.join()
+
+            } catch (e: Exception) {
+                Timber.e(e, "Error ejecutando webhook")
             }
-
-
-            extension.updateWebhookStatus(webhookId, StepStatus.EXECUTING)
-            extension.updateCustomMessageStatus(0, StepStatus.EXECUTING)
-
-
-            extension.executeWebhookWithStateTransitions(webhookId)
-
-
-            monitorJob.join()
-
-        } catch (e: Exception) {
-            Timber.e(e, "Error ejecutando webhook")
         }
     }
-}}
+}
