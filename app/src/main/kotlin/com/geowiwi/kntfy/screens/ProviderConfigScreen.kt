@@ -1,4 +1,4 @@
-package com.enderthor.kActions.screens
+package com.geowiwi.kntfy.screens
 
 
 import android.net.Uri
@@ -18,12 +18,12 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import com.enderthor.kActions.R
-import com.enderthor.kActions.data.ConfigData
-import com.enderthor.kActions.data.ProviderType
-import com.enderthor.kActions.data.SenderConfig
-import com.enderthor.kActions.extension.managers.ConfigurationManager
-import com.enderthor.kActions.data.export
+import com.geowiwi.kntfy.R
+import com.geowiwi.kntfy.data.ConfigData
+import com.geowiwi.kntfy.data.ProviderType
+import com.geowiwi.kntfy.data.SenderConfig
+import com.geowiwi.kntfy.extension.managers.ConfigurationManager
+import com.geowiwi.kntfy.data.export
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -202,7 +202,10 @@ fun ProviderConfigScreen() {
         scope.launch {
             try {
 
-                val currentConfig = providerConfigs[selectedProvider] ?: SenderConfig(selectedProvider, "")
+                val currentConfig = providerConfigs[selectedProvider] ?: SenderConfig(
+                    selectedProvider,
+                    ""
+                )
                 val updatedConfig = currentConfig.copy(apiKey = apiKey)
 
                 val updatedConfigs = providerConfigs.values.toMutableList()

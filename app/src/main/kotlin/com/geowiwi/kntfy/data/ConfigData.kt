@@ -1,10 +1,10 @@
-package com.enderthor.kActions.data
+package com.geowiwi.kntfy.data
 
 import android.content.Context
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import com.enderthor.kActions.R
+import com.geowiwi.kntfy.R
 
 const val MIN_TIME_BETWEEN_SAME_MESSAGES = 3 * 60 * 1000L
 const val MIN_TIME_TEXTBELT_FREE = 24 * 60 * 60 * 1000L

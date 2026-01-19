@@ -1,4 +1,4 @@
-package com.enderthor.kActions.extension.managers
+package com.geowiwi.kntfy.extension.managers
 
 import android.content.Context
 import androidx.core.content.edit

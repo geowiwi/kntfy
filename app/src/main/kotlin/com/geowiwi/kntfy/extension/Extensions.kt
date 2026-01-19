@@ -1,7 +1,7 @@
-package com.enderthor.kActions.extension
+package com.geowiwi.kntfy.extension
 
 
-import com.enderthor.kActions.data.GpsCoordinates
+import com.geowiwi.kntfy.data.GpsCoordinates
 import io.hammerhead.karooext.KarooSystemService
 import io.hammerhead.karooext.models.HttpResponseState
 import io.hammerhead.karooext.models.OnGlobalPOIs

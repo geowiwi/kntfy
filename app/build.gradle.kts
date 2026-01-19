@@ -6,15 +6,15 @@ plugins {
 }
 
 android {
-    namespace = "com.enderthor.kActions"
+    namespace = "com.geowiwi.kntfy"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.enderthor.kActions"
+        applicationId = "com.geowiwi.kntfy"
         minSdk = 23
         targetSdk = 34
-        versionCode = 202505051
-        versionName = "1.1.0"
+        versionCode = 20260119
+        versionName = "0.0.1"
     }
 
     buildTypes {

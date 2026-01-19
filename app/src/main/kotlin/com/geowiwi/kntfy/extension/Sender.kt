@@ -1,7 +1,7 @@
-package com.enderthor.kActions.extension
+package com.geowiwi.kntfy.extension
 
-import com.enderthor.kActions.data.ProviderType
-import com.enderthor.kActions.extension.managers.ConfigurationManager
+import com.geowiwi.kntfy.data.ProviderType
+import com.geowiwi.kntfy.extension.managers.ConfigurationManager
 import io.hammerhead.karooext.KarooSystemService
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
@@ -9,6 +9,7 @@ import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import timber.log.Timber
+import java.net.URLEncoder
 
 
 class Sender(
@@ -233,7 +234,7 @@ class Sender(
             )
 
             val formBody = formParams.entries.joinToString("&") { (key, value) ->
-                "${key}=${java.net.URLEncoder.encode(value, "UTF-8")}"
+                "${key}=${URLEncoder.encode(value, "UTF-8")}"
             }
 
             val url = "https://api.elasticemail.com/v2/email/send"
@@ -329,7 +330,7 @@ class Sender(
                 }
 
                 ProviderType.CALLMEBOT -> {
-                    val encodedMessage = java.net.URLEncoder.encode(message, "UTF-8")
+                    val encodedMessage = URLEncoder.encode(message, "UTF-8")
                     val url = "https://api.callmebot.com/whatsapp.php?phone=$formattedPhone&text=$encodedMessage&apikey=${config.apiKey}"
 
                     val response = karooSystem.makeHttpRequest(

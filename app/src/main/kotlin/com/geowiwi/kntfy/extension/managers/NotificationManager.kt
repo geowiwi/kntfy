@@ -1,14 +1,14 @@
-package com.enderthor.kActions.extension.managers
+package com.geowiwi.kntfy.extension.managers
 
 import android.content.Context
-import com.enderthor.kActions.data.ConfigData
-import com.enderthor.kActions.data.ProviderType
-import com.enderthor.kActions.data.SenderConfig
-import com.enderthor.kActions.data.karooUrl
-import com.enderthor.kActions.extension.Sender
-import com.enderthor.kActions.data.MIN_TIME_BETWEEN_SAME_MESSAGES
-import com.enderthor.kActions.data.MIN_TIME_TEXTBELT_FREE
-import com.enderthor.kActions.data.StepStatus
+import com.geowiwi.kntfy.data.ConfigData
+import com.geowiwi.kntfy.data.ProviderType
+import com.geowiwi.kntfy.data.SenderConfig
+import com.geowiwi.kntfy.data.karooUrl
+import com.geowiwi.kntfy.extension.Sender
+import com.geowiwi.kntfy.data.MIN_TIME_BETWEEN_SAME_MESSAGES
+import com.geowiwi.kntfy.data.MIN_TIME_TEXTBELT_FREE
+import com.geowiwi.kntfy.data.StepStatus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -20,9 +20,9 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class NotificationManager(
-private val sender: Sender,
-context: Context,
-private val scope: CoroutineScope
+    private val sender: Sender,
+    context: Context,
+    private val scope: CoroutineScope
 ) {
     private val notificationStateStore = NotificationStateStore(context)
     private val configManager = ConfigurationManager(context)

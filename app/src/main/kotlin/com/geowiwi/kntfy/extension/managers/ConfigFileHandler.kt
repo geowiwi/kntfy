@@ -1,12 +1,12 @@
-package com.enderthor.kActions.extension.managers
+package com.geowiwi.kntfy.extension.managers
 
 import android.content.Context
 import android.net.Uri
-import com.enderthor.kActions.data.SenderConfig
-import com.enderthor.kActions.data.SenderConfigImportResult
-import com.enderthor.kActions.data.WebhookData
-import com.enderthor.kActions.data.WebhookImportResult
-import com.enderthor.kActions.extension.jsonWithUnknownKeys
+import com.geowiwi.kntfy.data.SenderConfig
+import com.geowiwi.kntfy.data.SenderConfigImportResult
+import com.geowiwi.kntfy.data.WebhookData
+import com.geowiwi.kntfy.data.WebhookImportResult
+import com.geowiwi.kntfy.extension.jsonWithUnknownKeys
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import timber.log.Timber

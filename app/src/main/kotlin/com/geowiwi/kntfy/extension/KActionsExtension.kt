@@ -1,15 +1,15 @@
-package com.enderthor.kActions.extension
+package com.geowiwi.kntfy.extension
 
-import com.enderthor.kActions.BuildConfig
-import com.enderthor.kActions.data.ConfigData
-import com.enderthor.kActions.data.ProviderType
-import com.enderthor.kActions.data.SenderConfig
-import com.enderthor.kActions.data.StepStatus
-import com.enderthor.kActions.datatype.CustomActionDataType
-import com.enderthor.kActions.extension.managers.ConfigurationManager
-import com.enderthor.kActions.extension.managers.NotificationManager
-import com.enderthor.kActions.extension.managers.RideStateManager
-import com.enderthor.kActions.extension.managers.WebhookManager
+import com.geowiwi.kntfy.BuildConfig
+import com.geowiwi.kntfy.data.ConfigData
+import com.geowiwi.kntfy.data.ProviderType
+import com.geowiwi.kntfy.data.SenderConfig
+import com.geowiwi.kntfy.data.StepStatus
+import com.geowiwi.kntfy.datatype.CustomActionDataType
+import com.geowiwi.kntfy.extension.managers.ConfigurationManager
+import com.geowiwi.kntfy.extension.managers.NotificationManager
+import com.geowiwi.kntfy.extension.managers.RideStateManager
+import com.geowiwi.kntfy.extension.managers.WebhookManager
 import io.hammerhead.karooext.KarooSystemService
 import io.hammerhead.karooext.extension.KarooExtension
 import kotlinx.coroutines.CoroutineScope
@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import kotlin.collections.forEach
 import kotlin.coroutines.CoroutineContext
 
 class KActionsExtension : KarooExtension("kactions", BuildConfig.VERSION_NAME), CoroutineScope {
@@ -70,7 +71,7 @@ class KActionsExtension : KarooExtension("kactions", BuildConfig.VERSION_NAME), 
         configManager = ConfigurationManager(applicationContext)
         sender = Sender(karooSystem, configManager)
 
-        notificationManager = NotificationManager(sender, applicationContext,this)
+        notificationManager = NotificationManager(sender, applicationContext, this)
         webhookManager = WebhookManager(applicationContext, karooSystem, this)
         webhookManager.restorePendingWebhookStates()
         rideStateManager = RideStateManager(

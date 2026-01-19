@@ -1,17 +1,17 @@
-package com.enderthor.kActions.extension.managers
+package com.geowiwi.kntfy.extension.managers
 
 import android.content.Context
 import android.net.Uri
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.enderthor.kActions.activity.dataStore
-import com.enderthor.kActions.data.ConfigData
-import com.enderthor.kActions.data.SenderConfig
-import com.enderthor.kActions.data.WebhookData
-import com.enderthor.kActions.data.defaultSenderConfig
-import com.enderthor.kActions.data.defaultWebhookData
-import com.enderthor.kActions.data.getPreviewConfigData
-import com.enderthor.kActions.extension.jsonWithUnknownKeys
+import com.geowiwi.kntfy.activity.dataStore
+import com.geowiwi.kntfy.data.ConfigData
+import com.geowiwi.kntfy.data.SenderConfig
+import com.geowiwi.kntfy.data.WebhookData
+import com.geowiwi.kntfy.data.defaultSenderConfig
+import com.geowiwi.kntfy.data.defaultWebhookData
+import com.geowiwi.kntfy.data.getPreviewConfigData
+import com.geowiwi.kntfy.extension.jsonWithUnknownKeys
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first

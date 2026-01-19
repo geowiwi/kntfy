@@ -1,4 +1,4 @@
-package com.enderthor.kActions.screens
+package com.geowiwi.kntfy.screens
 
 
 import androidx.compose.foundation.layout.Column

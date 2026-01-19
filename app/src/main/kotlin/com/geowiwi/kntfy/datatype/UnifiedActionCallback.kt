@@ -1,12 +1,12 @@
-package com.enderthor.kActions.datatype
+package com.geowiwi.kntfy.datatype
 
 import android.content.Context
 import androidx.glance.GlanceId
 import androidx.glance.action.ActionParameters
 import androidx.glance.appwidget.action.ActionCallback
-import com.enderthor.kActions.data.StepStatus
-import com.enderthor.kActions.extension.KActionsExtension
-import com.enderthor.kActions.extension.managers.ConfigurationManager
+import com.geowiwi.kntfy.data.StepStatus
+import com.geowiwi.kntfy.extension.KActionsExtension
+import com.geowiwi.kntfy.extension.managers.ConfigurationManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -15,7 +15,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import kotlin.coroutines.cancellation.CancellationException
 
 class UnifiedActionCallback : ActionCallback {
     companion object {
@@ -38,7 +37,7 @@ class UnifiedActionCallback : ActionCallback {
         parameters: ActionParameters
     ) {
         try {
-            val extension = KActionsExtension.getInstance() ?: return
+            val extension = KActionsExtension.Companion.getInstance() ?: return
             val statusString = parameters[STATUS] ?: return
             val currentStatus = try { StepStatus.valueOf(statusString) } catch (e: Exception) { StepStatus.IDLE }
             val messageText = parameters[MESSAGE_TEXT] ?: ""
@@ -121,7 +120,7 @@ class UnifiedActionCallback : ActionCallback {
         } catch (e: Exception) {
             Timber.e(e, "Error en UnifiedActionCallback")
             try {
-                val extension = KActionsExtension.getInstance()
+                val extension = KActionsExtension.Companion.getInstance()
                 if (extension != null) {
                     resetState(extension)
                 }

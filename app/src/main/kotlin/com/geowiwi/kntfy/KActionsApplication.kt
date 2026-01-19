@@ -1,14 +1,15 @@
-package com.enderthor.kActions
+package com.geowiwi.kntfy
 
 import android.app.Application
 import android.util.Log
+import com.geowiwi.kntfy.BuildConfig
 import timber.log.Timber
 import timber.log.Timber.DebugTree
 import timber.log.Timber.Forest.plant
 import timber.log.Timber.Tree
 
 
-class KActionsApplication : Application() {
+class kntfyApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()

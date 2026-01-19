@@ -1,4 +1,4 @@
-package com.enderthor.kActions.activity
+package com.geowiwi.kntfy.activity
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -14,7 +14,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 
-import com.enderthor.kActions.screens.TabLayout
+import com.geowiwi.kntfy.screens.TabLayout
 
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")

@@ -1,4 +1,4 @@
-package com.enderthor.kActions.screens
+package com.geowiwi.kntfy.screens
 
 
 import androidx.compose.foundation.layout.*
@@ -19,17 +19,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.enderthor.kActions.R
-import com.enderthor.kActions.data.ConfigData
-import com.enderthor.kActions.data.ProviderType
-import com.enderthor.kActions.extension.Sender
-import com.enderthor.kActions.extension.managers.ConfigurationManager
+import com.geowiwi.kntfy.R
+import com.geowiwi.kntfy.data.ConfigData
+import com.geowiwi.kntfy.data.ProviderType
+import com.geowiwi.kntfy.extension.Sender
+import com.geowiwi.kntfy.extension.managers.ConfigurationManager
 import io.hammerhead.karooext.KarooSystemService
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import com.enderthor.kActions.data.customMessage
+import com.geowiwi.kntfy.data.customMessage
 import timber.log.Timber
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -305,7 +305,8 @@ fun ConfigurationScreen() {
                     ) ?: ConfigData(
                         isActive = true,
                         karooKey = karooKey.trim(),
-                        delayIntents = delayBetweenNotificationsInt.toIntOrNull()?.toDouble() ?: 0.0,
+                        delayIntents = delayBetweenNotificationsInt.toIntOrNull()?.toDouble()
+                            ?: 0.0,
                         phoneNumbers = phoneNumbers,
                         emails = emails,
                         startMessage = startMessage.trim(),

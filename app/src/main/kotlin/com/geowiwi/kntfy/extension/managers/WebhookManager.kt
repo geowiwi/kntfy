@@ -1,14 +1,14 @@
-package com.enderthor.kActions.extension.managers
+package com.geowiwi.kntfy.extension.managers
 
 import android.content.Context
-import com.enderthor.kActions.data.GpsCoordinates
-import com.enderthor.kActions.data.WebhookData
-import com.enderthor.kActions.data.StepStatus
-import com.enderthor.kActions.extension.makeHttpRequest
-import com.enderthor.kActions.extension.getGpsFlow
-import com.enderthor.kActions.extension.getHomeFlow
-import com.enderthor.kActions.extension.streamDataMonitorFlow
-import com.enderthor.kActions.extension.streamUserProfile
+import com.geowiwi.kntfy.data.GpsCoordinates
+import com.geowiwi.kntfy.data.WebhookData
+import com.geowiwi.kntfy.data.StepStatus
+import com.geowiwi.kntfy.extension.makeHttpRequest
+import com.geowiwi.kntfy.extension.getGpsFlow
+import com.geowiwi.kntfy.extension.getHomeFlow
+import com.geowiwi.kntfy.extension.streamDataMonitorFlow
+import com.geowiwi.kntfy.extension.streamUserProfile
 import io.hammerhead.karooext.KarooSystemService
 import io.hammerhead.karooext.models.DataType
 import io.hammerhead.karooext.models.StreamState
@@ -161,8 +161,8 @@ class WebhookManager(
                                     updateWebhookStatus(webhook.id, StepStatus.SUCCESS)
                                     scheduleResetToIdle(webhook.id, 5_000)
                                 }
-                                StepStatus.SUCCESS,StepStatus.ERROR -> {
-                                    updateWebhookStatus(webhook.id,StepStatus.IDLE)
+                                StepStatus.SUCCESS, StepStatus.ERROR -> {
+                                    updateWebhookStatus(webhook.id, StepStatus.IDLE)
                                     webhookStateStore.clearWebhookState(webhook.id)
                                 }
                                 else -> webhookStateStore.clearWebhookState(webhook.id)

@@ -1,9 +1,9 @@
-package com.enderthor.kActions.extension.managers
+package com.geowiwi.kntfy.extension.managers
 
-import com.enderthor.kActions.data.ConfigData
-import com.enderthor.kActions.data.SenderConfig
-import com.enderthor.kActions.extension.streamActiveRideProfile
-import com.enderthor.kActions.extension.streamRide
+import com.geowiwi.kntfy.data.ConfigData
+import com.geowiwi.kntfy.data.SenderConfig
+import com.geowiwi.kntfy.extension.streamActiveRideProfile
+import com.geowiwi.kntfy.extension.streamRide
 import io.hammerhead.karooext.KarooSystemService
 import io.hammerhead.karooext.models.ActiveRideProfile
 import io.hammerhead.karooext.models.RideProfile

@@ -1,4 +1,4 @@
-package com.enderthor.kActions.datatype
+package com.geowiwi.kntfy.datatype
 
 import android.content.Context
 import androidx.compose.ui.graphics.Color
@@ -21,14 +21,13 @@ import androidx.glance.layout.padding
 import androidx.glance.text.Text
 import androidx.glance.text.TextAlign
 import androidx.glance.text.TextStyle
-import com.enderthor.kActions.R
-import com.enderthor.kActions.data.StepStatus
-import com.enderthor.kActions.data.WebhookData
-import com.enderthor.kActions.data.customMessage
-import com.enderthor.kActions.extension.KActionsExtension
-import com.enderthor.kActions.extension.managers.ConfigurationManager
-import com.enderthor.kActions.extension.streamDataMonitorFlow
-import com.enderthor.kActions.extension.streamUserProfile
+import com.geowiwi.kntfy.R
+import com.geowiwi.kntfy.data.StepStatus
+import com.geowiwi.kntfy.data.WebhookData
+import com.geowiwi.kntfy.data.customMessage
+import com.geowiwi.kntfy.extension.managers.ConfigurationManager
+import com.geowiwi.kntfy.extension.streamDataMonitorFlow
+import com.geowiwi.kntfy.extension.streamUserProfile
 import io.hammerhead.karooext.KarooSystemService
 import io.hammerhead.karooext.extension.DataTypeImpl
 import io.hammerhead.karooext.internal.ViewEmitter

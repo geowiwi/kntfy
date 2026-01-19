@@ -1,4 +1,4 @@
-package com.enderthor.kActions.screens
+package com.geowiwi.kntfy.screens
 
 import android.net.Uri
 import androidx.compose.foundation.layout.*
@@ -17,12 +17,12 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import com.enderthor.kActions.R
-import com.enderthor.kActions.data.GpsCoordinates
-import com.enderthor.kActions.data.WebhookData
-import com.enderthor.kActions.data.export
-import com.enderthor.kActions.extension.makeHttpRequest
-import com.enderthor.kActions.extension.managers.ConfigurationManager
+import com.geowiwi.kntfy.R
+import com.geowiwi.kntfy.data.GpsCoordinates
+import com.geowiwi.kntfy.data.WebhookData
+import com.geowiwi.kntfy.data.export
+import com.geowiwi.kntfy.extension.makeHttpRequest
+import com.geowiwi.kntfy.extension.managers.ConfigurationManager
 import io.hammerhead.karooext.KarooSystemService
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
