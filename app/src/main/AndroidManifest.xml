@@ -4,9 +4,9 @@
     <application
         android:name=".kntfyApplication"
         android:allowBackup="true"
-        android:icon="@drawable/ic_kactions"
+        android:icon="@drawable/kntfy"
         android:label="kntfy"
-        android:roundIcon="@drawable/ic_kactions"
+        android:roundIcon="@drawable/kntfy"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat">
 
