@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ExtensionInfo
-    displayName="@string/extension_name"
-    icon="@drawable/ic_kactions"
-    id="kactions"
+    displayName="kntfy"
+    icon="@drawable/kntfy"
+    id="kntfy"
     scansDevices="false">
     <DataType
         description="@string/custom1_datatype"
         displayName="@string/custom1_datatype"
         graphical="true"
-        icon="@drawable/ic_kactions"
+        icon="@drawable/kntfy"
         typeId="custom-one" />
 </ExtensionInfo>
