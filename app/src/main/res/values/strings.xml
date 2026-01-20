@@ -72,7 +72,7 @@
     <string name="email_from">Sender email address</string>
     <string name="email_to">Recipient email address</string>
     <string name="textbelt_free_delay_warning">Minimum delay TextBelt free is 24 hours.</string>
-    <string name="webhook_test_success">Test webhook ok </string>
+    <string name="webhook_test_success">Test webhook OK</string>
     <string name="webhook_test_error">Error to send webhook</string>
     <string name="email_1">Email</string>
     <string name="email_addresses">Email address</string>
