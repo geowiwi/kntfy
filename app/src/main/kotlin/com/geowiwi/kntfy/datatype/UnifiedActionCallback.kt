@@ -5,7 +5,7 @@ import androidx.glance.GlanceId
 import androidx.glance.action.ActionParameters
 import androidx.glance.appwidget.action.ActionCallback
 import com.geowiwi.kntfy.data.StepStatus
-import com.geowiwi.kntfy.extension.KActionsExtension
+import com.geowiwi.kntfy.extension.kntfyExtension
 import com.geowiwi.kntfy.extension.managers.ConfigurationManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -37,7 +37,7 @@ class UnifiedActionCallback : ActionCallback {
         parameters: ActionParameters
     ) {
         try {
-            val extension = KActionsExtension.Companion.getInstance() ?: return
+            val extension = kntfyExtension.Companion.getInstance() ?: return
             val statusString = parameters[STATUS] ?: return
             val currentStatus = try { StepStatus.valueOf(statusString) } catch (e: Exception) { StepStatus.IDLE }
             val messageText = parameters[MESSAGE_TEXT] ?: ""
@@ -120,7 +120,7 @@ class UnifiedActionCallback : ActionCallback {
         } catch (e: Exception) {
             Timber.e(e, "Error en UnifiedActionCallback")
             try {
-                val extension = KActionsExtension.Companion.getInstance()
+                val extension = kntfyExtension.Companion.getInstance()
                 if (extension != null) {
                     resetState(extension)
                 }
@@ -130,7 +130,7 @@ class UnifiedActionCallback : ActionCallback {
         }
     }
 
-    private fun resetState(extension: KActionsExtension) {
+    private fun resetState(extension: kntfyExtension) {
         executingTimeoutJob?.cancel()
         executingStartTime = 0
         consecutiveClicks = 0
@@ -138,7 +138,7 @@ class UnifiedActionCallback : ActionCallback {
         extension.updateWebhookStatus(0, StepStatus.IDLE)
     }
 
-    private suspend fun executeMessage(extension: KActionsExtension, messageText: String) {
+    private suspend fun executeMessage(extension: kntfyExtension, messageText: String) {
         withContext(Dispatchers.IO) {
             try {
                 extension.updateCustomMessageStatus(0, StepStatus.EXECUTING)
@@ -149,7 +149,7 @@ class UnifiedActionCallback : ActionCallback {
         }
     }
 
-    private suspend fun executeWebhook(extension: KActionsExtension, webhookId: Int, context: Context) {
+    private suspend fun executeWebhook(extension: kntfyExtension, webhookId: Int, context: Context) {
         withContext(Dispatchers.IO) {
             try {
                 executingTimeoutJob?.cancel()

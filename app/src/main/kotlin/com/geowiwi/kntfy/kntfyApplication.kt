@@ -2,7 +2,6 @@ package com.geowiwi.kntfy
 
 import android.app.Application
 import android.util.Log
-import com.geowiwi.kntfy.BuildConfig
 import timber.log.Timber
 import timber.log.Timber.DebugTree
 import timber.log.Timber.Forest.plant

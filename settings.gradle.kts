@@ -46,5 +46,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "KActions Extension"
+rootProject.name = "kntfy Extension"
 include(":app")

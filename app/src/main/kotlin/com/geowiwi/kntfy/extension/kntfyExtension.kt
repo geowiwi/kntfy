@@ -22,7 +22,7 @@ import timber.log.Timber
 import kotlin.collections.forEach
 import kotlin.coroutines.CoroutineContext
 
-class KActionsExtension : KarooExtension("kactions", BuildConfig.VERSION_NAME), CoroutineScope {
+class kntfyExtension : KarooExtension("kactions", BuildConfig.VERSION_NAME), CoroutineScope {
 
     private val job = SupervisorJob()
     override val coroutineContext: CoroutineContext
@@ -43,11 +43,11 @@ class KActionsExtension : KarooExtension("kactions", BuildConfig.VERSION_NAME), 
     private var senderConfig: SenderConfig? = null
 
     companion object {
-        private var instance: KActionsExtension? = null
+        private var instance: kntfyExtension? = null
 
-        fun getInstance(): KActionsExtension? = instance
+        fun getInstance(): kntfyExtension? = instance
 
-        internal fun setInstance(ext: KActionsExtension) {
+        internal fun setInstance(ext: kntfyExtension) {
             instance = ext
         }
     }

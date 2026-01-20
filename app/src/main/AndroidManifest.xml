@@ -20,7 +20,7 @@
         </activity>
 
         <service
-            android:name=".extension.KActionsExtension"
+            android:name=".extension.kntfyExtension"
             android:exported="true"
             tools:ignore="ExportedService">
             <intent-filter>
