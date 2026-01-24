@@ -1,208 +1,89 @@
-# KActions - Notification Extension for Karoo
+# kntfy
 
-> [!WARNING]  
-> This app is currently in early stage and its main features might not work at all. If you want to test it anyway and encounter issues, please report them in the github issues, ideally with adb logs attached.
-> Please we careful if you use webhooks, you can trigger actions with this extension and you need to be careful with this.
+**ntfy.sh notifications for Karoo rides**
 
-This extension for Karoo devices allows to perform some automatic actions:
-- Send automated notifications when you start or finish a bike ride. Now compatible with multiple messaging providers.
-- Execute automated actions (webhook)
-- Execute custom custom action (webhook) from custom datafield.
-- Send custom messages directly from a button (custom datafield).
+kntfy is a lightweight Karoo extension that sends **automatic push notifications via ntfy.sh** when you start or finish a ride.
 
-Compatible with Karoo 2 and Karoo 3 running Karoo OS version 1.524.2003 and later.
+It is designed to be simple, reliable, and privacy‑friendly, using ntfy topics instead of third‑party messaging platforms.
 
-<a href="https://www.buymeacoffee.com/enderthor" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
+---
 
-## Installation
+## Key Features
 
-### For Karoo 2:
+* Automatic notifications on **ride start** and **ride end**
+* Fully customizable notification messages
+* Optional **Karoo Live Track** link
+* Anti‑spam protection with configurable minimum delay
+* Supports **public or self‑hosted ntfy servers**
+* Languages: English, Spanish
 
-1. Download the APK from the releases section.
-2. Prepare your Karoo for sideloading by following [DC Rainmaker's step-by-step guide](https://www.dcrainmaker.com/2021/02/how-to-sideload-android-apps-on-your-hammerhead-karoo-1-karoo-2.html).
-3. Install the application with the command `adb install kactions.apk`.
+---
 
-### For Karoo 3 (v > 1.527):
+## Compatibility
 
-1. Open the APK download link from your mobile device.
-2. Share the file with the Hammerhead Companion app.
-3. Install the app through Hammerhead Companion.
+* Karoo 2
+* Karoo 3
+* Karoo OS **1.524.2003 or later**
 
-## Notifications Configuration
+An active internet connection is required:
 
-KActions can send automatic messages when you start/stop your ride. **You need to have connected your Karoo with the mobile app (Karoo 3) or have a data connection (Karoo 2)**.
+* Karoo 3: via Companion App
+* Karoo 2: via Wi‑Fi or mobile hotspot
 
-You need to configure basic information in Conf. Tab:
+---
 
-1. **Configure notification options**:
-   - Enable or disable notifications for different events: start, end of the ride.
-   - You've configure this for notifications and webhooks separately.
+## Setup Overview
 
-2. **Configure phone number**:
-   - Add one phone numbers that will receive notifications.
-   - Number should be entered with E164 format (with the '+' sign and with the country code example: +34675123123).
+1. Create an **ntfy topic** (for example: `my-karoo-rides`)
+2. Subscribe to the topic using the ntfy app, web UI, or your own server
+3. Open **kntfy** on your Karoo and configure:
 
-3. **Customize messages**:
-   - Personalize messages for each type of event.
-   - You can fill Custom Message also, this is for sending custom messages directly from your ride when you want. If you insert/write #dist# in your text, this will be substitute for remaining distance (you need to have a route selected also)
-   
-4. **Select actions**:
-    - Start, stop or both.
-    - Enable only in outdoors activities (only karoo > 1.5481)
+    * Topic name
+    * Notification events (start / end)
+    * Custom messages (optional)
+4. Use **Test Notification** to verify delivery
 
-5. **Select time betweem messages**:
-    - You can configure time between two messages, this is for avoid to receive several messages, you can configure it but minimum time is 5 minutes (internal delay).
+No interaction is required during the ride — notifications are sent automatically in the background.
 
-6. **Live Track**:
-   - Fill Live Track Karoo key. If you fill this, you will receive the link with your tracking info you need to fill only the key. For example:
-   https://dashboard.hammerhead.io/live/3738Ag, please fill only 3738Ag
+---
 
-7. **During your ride**:
-   - Once configured, KActions will automatically send messages/execute webhook when you start or end a ride on your Karoo.
-   - You don't need to interact with the app during the ride; everything works in the background.
+## Message Customization
 
+You can personalize the messages sent for each event.
 
-Webhook and Custom Message can be triggered pressing the button in the app if you add custom field in the profiles screen. Button works:
-1. Push the button in the app to activate the webhook or send a custom message.
-2. If you push the button before 8 seconds, the app will send a custom message.
-3. If you push the button after 8 seconds, the app will configure to send a webhook.
-4. If you wait more than 30 seconds, the app will reset the button and you need to push again.
+Supported placeholder:
 
-This button has a security measure (for webhook action only), you have to press twice to send the webhook (be triggered only if you're near home configured option)
+* `#dist#` → remaining route distance (requires a loaded route)
 
-KActions supports several providers to send notifications, you need to configure before use the app:
+---
 
-### WhatsApp (CallMeBot) Preferred option (easy)
+## Known Limitations
 
-1. **Get your CallMeBot API Key**:
-   - Visit [CallMeBot](https://www.callmebot.com/blog/free-api-whatsapp-messages/) and follow the instructions.
-   - CallMeBot is free and you don't need to link your number (only has to send a message and you'll have the key code) but you can only use with one number, then you've to generate the key from the destination number (where you want to receive notifications).
-   - If you want you can app the Callmebot number in your contacts with a more friendly name. Please, you can do this steps in receiver mobile not in yours.
+* Notifications may be delayed if connectivity is unstable
+* Delivery depends on the availability of the ntfy service or your self‑hosted instance
 
-2. **Configure KActions**:
-   - Open KActions on your Karoo.
-   - Select "WhatsApp (CallMeBot)" as the provider.
-   - Enter your CallMeBot API Key.
-   - Test CallMeBot configuration with Test Button.
-  
-### SMS (TextBelt). Second preferred option
+---
 
-1. **About TextBelt**:
-   - TextBelt offers worldwide SMS sending.
-   - The free version allows 1 SMS per day. This is easy but you can only send a sms and if there is some problem you cannot retry same day.
-   - For more messages, you need to purchase credits at [TextBelt](https://textbelt.com/). 
-   - You'll receive from different numbers (TextBelt has a significant pool number)
+## Privacy
 
-2. **Configure TextBelt in KActions**:
-   - Select "SMS (TextBelt)" as the provider.
-   - To use the free version, leave the API Key field empty or type "textbelt".
-   - If you've purchased credits, enter your API Key.
-   - Test Textbelt configuration with Test Button.
+* All configuration is stored **locally on the Karoo device**
+* Notification content is sent only to the configured ntfy topic
+* kntfy has **no affiliation with ntfy.sh**
+* Firebase Crashlytics is used solely for crash reporting
 
-### WhatsApp (WHAPI) Complicated option but powerful.
+---
 
-1. **Create a Whapi account**:
-   - Visit [Whapi.io](https://whapi.io/) and register.
-   - Whapi isn't free but they've sandbox and it's free (aroung 1000 whats/month). Please read whapi conditions because you've to link a real number if you use a sandbox. If you don't understand it, please don't use it. It's easy but you need to understand risks. I will not provide more info about enrollment process.
+## Developer
 
-2. **Configure KActions**:
-   - Open KActions on your Karoo.
-   - Select "WhatsApp (WHAPI)" as the provider.
-   - Paste your API Key in the corresponding field.
-   - Test Whapi configuration with Test Button.
+Developed by **geowiwi**
+[https://github.com/geowiwi/kntfy](https://github.com/geowiwi/kntfy) based
+on [https://github.com/enderthor/kactions](https://github.com/enderthor/kactions)
 
-## Webhook Configuration
+Built using the **Karoo Extensions Framework** by Hammerhead
 
-KActions allows you to configure webhooks to execute external services when events occur during your ride (start/stop) or you can also execute it if you add webhook custom field in your profile. Webhook configuration is only for advanced users, it's very powerful (because you can execute action you want) but it's necessary you have experience. 
+---
 
-1. **Enable webhooks**:
-   - In the webhook configuration screen, activate the "Enable webhook" option.
-   - Enter a name to identify your webhook.
+## Links
 
-2a. **API/Webhook information**:
-   - You need to have information about your service (url, post and headers)
-   - Please check this info before next steps. You can use postman or other chrome extensions to check the correct behaviour.
-
-2b. **Configure URL, data and headers**:
-   - Enter the URL of the service that will receive the data.
-   - Define the POST request body in JSON format.
-   - Define Headers in JSON format.
-
-3. **Triggering events**:
-   - Select which events will trigger the webhook: start or end of ride.
-
-4. **Location filter (optional)**:
-   - You can configure the webhook to activate only when you're at at home location (POI Home in your Karoo).
-
-5. **Webhook testing**:
-   - Use the "Send test to webhook" function to verify the configuration.
-
-
-## Import/Export API keys/Webhook Configuration
-
-KActions allows you to import both provider configurations and webhook settings directly from a file. This is very useful if you've to introduce a complicated key or you webhook is complicated. You'll need to connect your Karoo by cable and execute adb commands.
-You only need to use it if you want to import complex api keys. If you don't have any file to import, you can skip this step.
-
-- **Import Provider Settings**:
-   - Fill information in file (you've a template in templates folder. Please don't modify structure, change/complete only apikey (insert your apikey for your provider (between quotation marks). You don't need to fill a key for every provider. You can do copy with adb with the command:
-   ```
-   adb push provider_config.json /sdcard/Android/data/com.enderthor.kActions/files/provider_config.json
-   ```
-   - Copy the file to your Karoo device in the KActions folder (/sdcard/Android/data/com.enderthor.kActions/files/). You need to create this folder if it doesn't exist (you can use a file manager app or ADB).
-   - Please respect the file name, it must to be "provider_config.json"
-   - Access the Provider Configuration screen.
-   - Tap the "Import Configuration" button.
-   - The app will read settings from file.
-
-- **Import Webhook Settings**:
-     - Fill information in file (you've a template in templates folder. Please don't modify structure, change/complete only second position, for example, don't change "name", insert name after : between  quotation marks. You don't need to fill all fields.
-     - Copy the file to your Karoo device in the KActions folder (/sdcard/Android/data/com.enderthor.kActions/files/). You don't need to create this folder if it doesn't exist (you can use a ADB and copy file directly). You can do copy with adb with the command:
-     ```
-     adb push webhook_config.json /sdcard/Android/data/com.enderthor.kActions/files/webhook_config.json
-     ```
-     - Please respect the file name, it must to be "webhook_config.json"
-     - Access the Webhook Configuration screen.
-     - Tap the "Import Webhooks" button.
-     - The app will read webhook configurations from the previously exported file.
-
-- This feature makes it easy to import api keys and webhooks information (but you and introduce directly by Karoo keyboard). Be careful, this file has sensitive information (api keys, phone numbers, etc.) and you should not share it with anyone.
-- This feature only save basic information you need to configure/select rest of the options in the app (like messages, enable, etc.).
-
-## Features
-
-- Automatic sending of notifications to preset number.
-- Customizable messages for each type of event.
-- Control of minimum time between messages of the same type.
-- Custom Message support to send messages with custom data directly from ride (datatype button)
-- Support for multiple languages (EN, ES).
-- Integration with Karoo Live for real-time tracking.
-- Multiple messaging providers (WhatsApp, SMS, email).
-- Webhooks for integration with external services.
-
-## Known Issues
-
-- Notifications may be delayed if there are connectivity issues.
-- Your Karoo needs an internet connection for messages to be sent correctly (mobile connected and linked with companion app if you've a karoo 3)
-- Each provider has its own usage limitations, especially in free plans.
-- Make sure you have sufficient balance if using paid plans.
-
-## Privacy/Liability
-
-- KActions does not store  personal information beyond what is necessary for its operation, obviously if you use a third part API (Whapi, CallmeBot, Textbelt or any information with webhooks) you're sharing this information with these services. KActions store information only in your Karoo device, but if you use a third party API, you need to understand you're sharing this info with third party service. 
-- KActions doesn't have any relationship or partnership with Whapi, Callmebot or Textbelt, you need to read and accept their conditions. If you use KActions with any of these services, you accept this. 
-- When you use Kactions you're agree you've all responsibility with the information (and use), for example don't spam, be careful it you link a webhook to make actions, etc. Kactions has no warranties, if you aren't agree with this you cannot use it.
-- Please be careful with your personal information.
-- KActions use Firebase Crashlytics for crash reporting. This is only used to improve the app and does not collect any personal information for use with KActions, but it's a service from Alphabet, please read this terms. If you do not agree with this, please do not use the app.
-
-## Credits
-
-- Developed by EnderThor.
-- Uses Whapi, CallMeBot, TextBelt  for message sending.
-- Uses the Karoo Extensions Framework developed by Hammerhead.
-
-## Useful Links
-
-- [Whapi Documentation](https://docs.whapi.io/)
-- [CallMeBot API](https://www.callmebot.com/blog/free-api-whatsapp-messages/)
-- [TextBelt SMS API](https://textbelt.com/)
-- [Karoo Extensions Framework](https://github.com/hammerheadnav/karoo-ext)
+* ntfy.sh: [https://ntfy.sh](https://ntfy.sh)
+* Karoo Extensions Framework: [https://github.com/hammerheadnav/karoo-ext](https://github.com/hammerheadnav/karoo-ext)

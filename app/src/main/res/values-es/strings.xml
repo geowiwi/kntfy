@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">KActions</string>
-    <string name="extension_name">KActions</string>
+    <string name="app_name">kntfy</string>
+    <string name="extension_name">kntfy</string>
 
     <!-- ConfigScreen -->
     <string name="notification_settings">Configuración de Notificaciones</string>
@@ -22,7 +22,7 @@
     <string name="connecting">Conectando…</string>
     <string name="send_test_message">Enviar mensaje de prueba</string>
     <string name="error_karoo_not_connected">Error: El sistema Karoo no está conectado</string>
-    <string name="test_message_content">Mensaje de prueba desde KActions</string>
+    <string name="test_message_content">Mensaje de prueba desde kntfy</string>
     <string name="test_message_sent">¡Mensaje de prueba enviado correctamente!</string>
     <string name="error_sending_message">Error al enviar mensaje. Revisa tu configuración.</string>
     <string name="settings_saved">Configuración guardada automáticamente</string>
