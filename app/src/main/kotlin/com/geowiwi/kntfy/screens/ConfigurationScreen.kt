@@ -376,27 +376,6 @@ fun ConfigurationScreen() {
                         style = MaterialTheme.typography.titleMedium
                     )
 
-                    OutlinedTextField(
-                        value = delayBetweenNotificationsInt,
-                        onValueChange = {
-                            if (it.isEmpty() || it.all { char -> char.isDigit() }) {
-                                delayBetweenNotificationsInt = it
-                                saveData()
-                            }
-                        },
-                        label = { Text(stringResource(R.string.notification_delay)) },
-                        modifier = Modifier.fillMaxWidth(),
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Number,
-                            imeAction = ImeAction.Done
-                        ),
-                        keyboardActions = KeyboardActions(onDone = {
-                            focusManager.clearFocus()
-                            keyboardController?.hide()
-                            saveData()
-                        })
-                    )
-
                     Text(
                         stringResource(R.string.send_notifications_when),
                         style = MaterialTheme.typography.titleMedium
@@ -461,46 +440,6 @@ fun ConfigurationScreen() {
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        stringResource(R.string.phone_numbers),
-                        style = MaterialTheme.typography.titleMedium
-                    )
-
-                    Text(
-                        stringResource(R.string.enter_up_to_3_phones),
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-
-                    PhoneNumberInput(
-                        value = phoneNumber1,
-                        onValueChange = {
-                            phoneNumber1 = it
-                            val (valid, message) = validatePhoneNumber(it)
-                            isPhone1Valid = valid
-                            phone1ErrorMessage = message
-                        },
-                        label = stringResource(R.string.number_1),
-                        isValid = isPhone1Valid,
-                        errorMessage = phone1ErrorMessage,
-                        onClear = {
-                            phoneNumber1 = ""
-                            isPhone1Valid = true
-                            phone1ErrorMessage = ""
-                            saveData()
-                        },
-                        onDone = { saveData() },
-                        onFocusChange = { focusState ->
-                            if (!focusState.isFocused) saveData()
-                        }
-                    )
-                }
-            }
-
-            Card {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Text(
                         stringResource(R.string.karoo_configuration),
                         style = MaterialTheme.typography.titleMedium
                     )
@@ -521,31 +460,6 @@ fun ConfigurationScreen() {
                             keyboardController?.hide()
                             saveData() })
                     )
-                }
-            }
-
-            Card {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Text(
-                        stringResource(R.string.test_sending),
-                        style = MaterialTheme.typography.titleMedium
-                    )
-
-                    Text(
-                        stringResource(R.string.send_to) + phoneNumber1,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-
-                    Button(
-                        onClick = { sendTestMessage() },
-                        modifier = Modifier.fillMaxWidth(),
-                        enabled = !isLoading && isPhone1Valid && phoneNumber1.isNotBlank()
-                    ) {
-                        Text(stringResource(R.string.send_test_message))
-                    }
                 }
             }
 

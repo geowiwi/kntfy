@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun TabLayout() {
     var selectedTabIndex by remember { mutableIntStateOf(0) }
-    val tabs = listOf("Configuration","Webhook")
+    val tabs = listOf("Configuration","ntfy")
 
 
     Column(modifier = Modifier.fillMaxSize()) {

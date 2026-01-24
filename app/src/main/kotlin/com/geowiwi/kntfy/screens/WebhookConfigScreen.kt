@@ -349,28 +349,6 @@ fun WebhookConfigScreen() {
                     )
 
                     OutlinedTextField(
-                        value = header,
-                        onValueChange = {
-                            header = it
-                        },
-                        label = { Text(stringResource(R.string.webhook_headers)) },
-                        placeholder = { Text(stringResource(R.string.webhook_headers_placeholder)) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .onFocusChanged {
-                                if (!it.isFocused) {
-                                    saveData()
-                                }
-                            },
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                        keyboardActions = KeyboardActions(onDone = {
-                            focusManager.clearFocus()
-                            keyboardController?.hide()
-                            saveData()
-                        })
-                    )
-
-                    OutlinedTextField(
                         value = postBody,
                         onValueChange = {
                             postBody = it
@@ -521,73 +499,6 @@ fun WebhookConfigScreen() {
                 }
             }
 
-
-            Card {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Button(
-                        onClick = {
-                            Timber.d("Importing webhooks from internal storage")
-                            scope.launch {
-                                isLoading = true
-                                try {
-                                    val file = File(context.getExternalFilesDir(null), "webhook_config.json")
-                                    val uri = Uri.fromFile(file)
-                                    val (success,message) = configManager.importWebhooksFromFile(uri,savedWebhooks)
-                                    statusMessage = if (success)
-                                        webhooksImportedSuccess
-                                    else
-                                        "$webhooksImportedError: $message"
-                                } catch (e: Exception) {
-                                    statusMessage =
-                                        webhooksImportedError + " ${e.message ?: ""}"
-                                } finally {
-                                    isLoading = false
-                                    statusMessage = null
-                                }
-                            }
-                        },
-                        enabled = !isLoading,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(stringResource(R.string.import_webhooks))
-                    }
-
-                    if (export)
-                        Button(
-                            onClick = {
-                                scope.launch {
-                                    isLoading = true
-                                    try {
-                                        val file = File(
-                                            context.getExternalFilesDir(null),
-                                            "webhook_config.json"
-                                        )
-                                        val uri = Uri.fromFile(file)
-                                        val success = configManager.exportWebhooksToFile(uri)
-                                        statusMessage = if (success)
-                                            webhookExportedSuccess + " ${file.absolutePath}"
-                                        else
-                                            webhooksExportError
-                                    } catch (e: Exception) {
-                                        statusMessage = webhooksExportError +
-                                                " ${e.message ?: ""}"
-                                    } finally {
-                                        isLoading = false
-                                        delay(15000)
-                                        statusMessage = null
-                                    }
-                                }
-                            },
-                            enabled = !isLoading,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text(stringResource(R.string.export_webhooks))
-                        }
-                }
-            }
             if (isLoading) {
                 LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
             }

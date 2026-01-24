@@ -57,7 +57,7 @@ class CustomActionDataType(
     datatype: String,
     private val context: Context,
     private val karooSystem: KarooSystemService,
-) : DataTypeImpl("kactions", datatype) {
+) : DataTypeImpl("kntfy", datatype) {
 
 
     companion object {

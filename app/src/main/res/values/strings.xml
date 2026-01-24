@@ -99,8 +99,8 @@
     <string name="webhook_location_filter">Location Filter</string>
     <string name="webhook_only_at_location">Only at Home POI location</string>
     <string name="webhook_location">Location</string>
-    <string name="webhook_test_section">Test ntfy</string>
-    <string name="webhook_send_test">Send ntfy test</string>
+    <string name="webhook_test_section">Test kntfy</string>
+    <string name="webhook_send_test">Send kntfy test</string>
     <string name="webhook_url_error">Error: URL must start with http:// or https://</string>
 
     <string name="idle_action">Tap to execute</string>
