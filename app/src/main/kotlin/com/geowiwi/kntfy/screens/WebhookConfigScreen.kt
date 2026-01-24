@@ -84,7 +84,7 @@ fun WebhookConfigScreen() {
         karooSystem.connect { connected ->
             karooConnected = connected
             isConnecting = false
-            Timber.d(if (connected) "Conectado a Karoo System" else "Error conectando a Karoo System")
+            Timber.d(if (connected) "Connected to Karoo System" else "Error connecting to Karoo System")
         }
 
         launch {
