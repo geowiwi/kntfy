@@ -79,18 +79,18 @@
     <string name="email_addresses">Email address</string>
 
     <!-- WebhookScreen -->
-    <string name="webhook_config_title">Webhook Configuration</string>
+    <string name="webhook_config_title">ntfy configuration</string>
     <string name="enable_webhook">Enable webhook</string>
     <string name="webhook_name">Name</string>
     <string name="webhook_url">URL</string>
-    <string name="webhook_url_placeholder">https://example.com/webhook</string>
-    <string name="webhook_post_body">POST Body (JSON)</string>
+    <string name="webhook_url_placeholder">https://ntfy.sh/kntfytestalerts</string>
+    <string name="webhook_post_body">ntfy message</string>
     <string name="webhook_post_body_placeholder">{ \"key\": \"value\" }</string>
     <string name="webhook_status_when_ride_starts">Ride start status</string>
     <string name="webhook_status_when_ride_starts_placeholder">Started</string>
     <string name="webhook_status_when_ride_stops">Ride stop status</string>
     <string name="webhook_status_when_ride_stops_placeholder">Stopped</string>
-    <string name="webhook_trigger_events">Events that trigger the webhook</string>
+    <string name="webhook_trigger_events">Events that trigger kntfy</string>
     <string name="webhook_on_start">On start</string>
     <string name="webhook_on_stop">On stop</string>
     <string name="webhook_on_pause">On pause</string>
@@ -99,8 +99,8 @@
     <string name="webhook_location_filter">Location Filter</string>
     <string name="webhook_only_at_location">Only at Home POI location</string>
     <string name="webhook_location">Location</string>
-    <string name="webhook_test_section">Test webhook</string>
-    <string name="webhook_send_test">Send webhook test</string>
+    <string name="webhook_test_section">Test ntfy</string>
+    <string name="webhook_send_test">Send ntfy test</string>
     <string name="webhook_url_error">Error: URL must start with http:// or https://</string>
 
     <string name="idle_action">Tap to execute</string>
