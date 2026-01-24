@@ -1,6 +1,5 @@
 package com.geowiwi.kntfy.screens
 
-import android.net.Uri
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
@@ -20,7 +19,6 @@ import androidx.compose.ui.unit.dp
 import com.geowiwi.kntfy.R
 import com.geowiwi.kntfy.data.GpsCoordinates
 import com.geowiwi.kntfy.data.WebhookData
-import com.geowiwi.kntfy.data.export
 import com.geowiwi.kntfy.extension.makeHttpRequest
 import com.geowiwi.kntfy.extension.managers.ConfigurationManager
 import io.hammerhead.karooext.KarooSystemService
@@ -30,7 +28,6 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
 import timber.log.Timber
-import java.io.File
 
 
 @OptIn(ExperimentalMaterial3Api::class)
