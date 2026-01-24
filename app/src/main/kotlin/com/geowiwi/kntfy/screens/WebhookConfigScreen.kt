@@ -191,6 +191,8 @@ fun WebhookConfigScreen() {
                     return@launch
                 }
 
+                // Get the test message from strings.xml
+                val testMessage = context.getString(R.string.ntfy_test_message)
 
                 val customHeaders = if (header.isNotBlank()) {
                     header.split("\n").mapNotNull { line ->
@@ -201,37 +203,39 @@ fun WebhookConfigScreen() {
                     }.toMap()
                 } else emptyMap()
 
-
                 val contentType = customHeaders["Content-Type"]?.lowercase()
 
+                // Use the test message instead of the configured postBody
+                val testPostBody = if (postBody.isBlank()) {
+                    testMessage
+                } else {
+                    // Replace the status placeholder with test message
+                    postBody.replace("%status%", testMessage)
+                }
 
                 val body = when {
-                    postBody.isBlank() -> null
+                    testPostBody.isBlank() -> null
                     contentType?.contains("json") == true -> {
-
-                        if (postBody.trim().startsWith("{") && postBody.trim().endsWith("}")) {
-
-                            postBody.toByteArray()
+                        if (testPostBody.trim().startsWith("{") && testPostBody.trim().endsWith("}")) {
+                            testPostBody.toByteArray(Charsets.UTF_8)
                         } else {
-
                             try {
                                 val jsonObject = buildJsonObject {
-                                    postBody.split("\n").forEach { line ->
+                                    testPostBody.split("\n").forEach { line ->
                                         val parts = line.split(":", limit = 2)
                                         if (parts.size == 2) {
                                             put(parts[0].trim(), JsonPrimitive(parts[1].trim()))
                                         }
                                     }
                                 }
-                                jsonObject.toString().toByteArray()
+                                jsonObject.toString().toByteArray(Charsets.UTF_8)
                             } catch (e: Exception) {
-                                postBody.toByteArray()
+                                testPostBody.toByteArray(Charsets.UTF_8)
                             }
                         }
                     }
-                    else -> postBody.toByteArray()
+                    else -> testPostBody.toByteArray(Charsets.UTF_8)
                 }
-
 
                 val headers = customHeaders
 

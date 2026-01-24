@@ -49,7 +49,7 @@ class WebhookManager(
                 } else 0.0
             }
             .catch { e ->
-                Timber.e(e, "Error obteniendo distancia: ${e.message}")
+                Timber.e(e, "Error getting distance: ${e.message}")
                 emit(0.0)
             }
     }
@@ -124,13 +124,13 @@ class WebhookManager(
                 }
 
                 if (shouldTrigger && locationOk) {
-                    return sendWebhook(modConfig)
+                    return sendNtfy(modConfig)
                 }
                 else return false
             }
             return false
         } catch (e: Exception) {
-            Timber.e(e, "Error al procesar webhook para evento $eventType y ID $webhookId")
+            Timber.e(e, "Error processing ntfy for event $eventType and ID $webhookId")
             return false
         }
     }
@@ -174,7 +174,7 @@ class WebhookManager(
                     }
                 }
             } catch (e: Exception) {
-                Timber.e(e, "Error restaurando estados de webhooks: ${e.message}")
+                Timber.e(e, "Error restoring ntfy states: ${e.message}")
             }
         }
     }
@@ -188,10 +188,10 @@ class WebhookManager(
                 if (index != -1) {
                     webhooks[index] = webhooks[index].copy(status = newStatus)
                     configManager.saveWebhookData(webhooks)
-                    Timber.d("Webhook $webhookId actualizado a estado $newStatus")
+                    Timber.d("Ntfy $webhookId updated to state $newStatus")
                 }
             } catch (e: Exception) {
-                Timber.e(e, "Error actualizando estado del webhook")
+                Timber.e(e, "Error updating ntfy state")
             }
         }
     }
@@ -217,7 +217,7 @@ class WebhookManager(
             val distance = distanceTo(currentLocation, targetLocation)
             return distance <= 0.070 // 70 meters
         } catch (e: Exception) {
-            Timber.e(e, "Error al comprobar la ubicación: ${e.message}")
+            Timber.e(e, "Error checking location: ${e.message}")
             return false
         }
     }
@@ -263,7 +263,7 @@ class WebhookManager(
                 updateWebhookStatus(webhookId, StepStatus.IDLE)
 
             } catch (e: Exception) {
-                Timber.e(e, "Error al ejecutar webhook $webhookId: ${e.message}")
+                Timber.e(e, "Error executing ntfy $webhookId: ${e.message}")
 
                 updateWebhookStatus(webhookId, StepStatus.ERROR)
                 webhookStateStore.saveWebhookState(
@@ -281,12 +281,12 @@ class WebhookManager(
         }
     }
 
-    suspend fun sendWebhook(config: WebhookData): Boolean {
+    suspend fun sendNtfy(config: WebhookData): Boolean {
         try {
-            Timber.d("Enviando webhook a: ${config.url}")
+            Timber.d("Sending ntfy to: ${config.url}")
 
             if (!config.url.startsWith("http")) {
-                Timber.e("URL de webhook inválida: ${config.url}")
+                Timber.e("Invalid ntfy URL: ${config.url}")
                 return false
             }
 
@@ -294,7 +294,7 @@ class WebhookManager(
             val remainingDistance = getRemainingDistance()
             val postBodyWithDistance = config.post.replace("#dst#", remainingDistance)
 
-            val defaultHeaders = mapOf("Content-Type" to "application/json")
+            val defaultHeaders = mapOf("Content-Type" to "application/json; charset=utf-8")
             val customHeaders = if (config.header.isNotBlank()) {
                 config.header.split("\n").mapNotNull { line ->
                     val parts = line.split(":", limit = 2)
@@ -311,7 +311,7 @@ class WebhookManager(
                 postBodyWithDistance.isBlank() -> null
                 contentType?.contains("json") == true -> {
                     if (postBodyWithDistance.trim().startsWith("{") && postBodyWithDistance.trim().endsWith("}")) {
-                        postBodyWithDistance.toByteArray()
+                        postBodyWithDistance.toByteArray(Charsets.UTF_8)
                     } else {
                         try {
                             val jsonObject = buildJsonObject {
@@ -322,13 +322,13 @@ class WebhookManager(
                                     }
                                 }
                             }
-                            jsonObject.toString().toByteArray()
+                            jsonObject.toString().toByteArray(Charsets.UTF_8)
                         } catch (e: Exception) {
-                            postBodyWithDistance.toByteArray()
+                            postBodyWithDistance.toByteArray(Charsets.UTF_8)
                         }
                     }
                 }
-                else -> postBodyWithDistance.toByteArray()
+                else -> postBodyWithDistance.toByteArray(Charsets.UTF_8)
             }
 
             val response = karooSystem.makeHttpRequest(
@@ -341,14 +341,14 @@ class WebhookManager(
             val success = response.statusCode in 200..299
 
             if (success) {
-                Timber.d("Webhook enviado correctamente a: ${config.url}")
+                Timber.d("Ntfy sent successfully to: ${config.url}")
             } else {
-                Timber.e("Error enviando webhook: ${response.statusCode}")
+                Timber.e("Error sending ntfy: ${response.statusCode}")
             }
 
             return success
         } catch (e: Exception) {
-            Timber.e(e, "Error enviando webhook")
+            Timber.e(e, "Error sending ntfy")
             return false
         }
     }

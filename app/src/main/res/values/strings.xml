@@ -24,6 +24,7 @@
     <string name="error_karoo_not_connected">Error: Karoo System is not connected</string>
     <string name="test_message_content">Test message from kntfy</string>
     <string name="test_message_sent">Test message sent successfully!</string>
+    <string name="ntfy_test_message">Test message from kntfy 😊🚴</string>
     <string name="error_sending_message">Error sending message. Check your configuration.</string>
     <string name="settings_saved">Settings saved automatically</string>
     <string name="notification_delay">Minutes between send a new start ride message</string>
