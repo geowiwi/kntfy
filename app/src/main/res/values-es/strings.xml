@@ -35,7 +35,7 @@
     <string name="number_1">Número</string>
     <string name="number_2">Número 2</string>
     <string name="number_3">Número 3</string>
-    <string name="error_no_plus">El número de teléfono debe introducirse con el símbolo \'+\' y con código de país. Ejemplo: +34675123123</string>
+    <string name="error_no_plus">El número de teléfono debe introducirse con el símbolo '+' y con código de país. Ejemplo: +34675123123</string>
     <string name="error_digits_only">El número de teléfono solo debe contener dígitos y +. Ejemplo: +34675123123</string>
     <string name="error_length">El número de teléfono debe tener entre 10–15 dígitos, el código de país es obligatorio. Ejemplo: +34675123123</string>
     <string name="phone_numbers_saved">Números de teléfono guardados</string>
@@ -84,7 +84,7 @@
     <string name="webhook_url">URL</string>
     <string name="webhook_url_placeholder">https://ejemplo.com/webhook</string>
     <string name="webhook_post_body">Cuerpo POST (JSON)</string>
-    <string name="webhook_post_body_placeholder">{ \"key\": \"value\" }</string>
+    <string name="webhook_post_body_placeholder">{ "key": "value" }</string>
     <string name="webhook_status_when_ride_starts">Estado al iniciar</string>
     <string name="webhook_status_when_ride_starts_placeholder">Iniciado</string>
     <string name="webhook_status_when_ride_stops">Estado al parar</string>
@@ -150,5 +150,6 @@
     <string name="both_actions">Pulsa para mensaje\nEspera para webhook</string>
     <string name="message_only_action">Pulsa ahora mensaje</string>
     <string name="webhook_only_action">Pulsa para webhook</string>
+    <string name="ntfy_test_message">Mensaje de prueba de kntfy 😊🚴</string>
 
 </resources>
